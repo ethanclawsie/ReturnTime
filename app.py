@@ -1,6 +1,6 @@
 import yfinance as yf
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
 import threading
 
