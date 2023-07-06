@@ -4,15 +4,18 @@ from datetime import datetime
 import time
 import threading
 
+
 def monitor_stock(stock_name, direction, percent_change):
     percent_change = float(percent_change)
     stock = yf.Ticker(stock_name)
     initial_price = stock.history(period="1d")["Close"][0]
     if direction == "up":
-        target_price = initial_price * (1 + percent_change/100)
+        target_price = initial_price * (1 + percent_change / 100)
     else:
-        target_price = initial_price * (1 - percent_change/100)
-    print(f"Monitoring {stock_name} for {percent_change:.2f}% {direction}ward movement from {initial_price:.2f} to {target_price:.2f}...")
+        target_price = initial_price * (1 - percent_change / 100)
+    print(
+        f"Monitoring {stock_name} for {percent_change:.2f}% {direction}ward movement from {initial_price:.2f} to {target_price:.2f}..."
+    )
     start_date = None
     while True:
         current_price = stock.history(period="1d")["Close"][0]
@@ -42,11 +45,16 @@ def monitor_stock(stock_name, direction, percent_change):
             }
             with open(f"{stock_name}_{direction}.json", "w") as f:
                 json.dump(data, f)
-            print(f"{stock_name} has hit the {target_price:.2f} target price {direction}ward!")
+            print(
+                f"{stock_name} has hit the {target_price:.2f} target price {direction}ward!"
+            )
             break
         else:
-            print(f"{stock_name} has not hit the {target_price:.2f} target price {direction}ward.")
-        time.sleep(900) # wait for 15 minutes
+            print(
+                f"{stock_name} has not hit the {target_price:.2f} target price {direction}ward."
+            )
+        time.sleep(900)  # wait for 15 minutes
+
 
 def monitor_stocks():
     threads = []
@@ -56,10 +64,15 @@ def monitor_stocks():
             for line in f:
                 stock_name, direction, percent_change = line.strip().split(",")
                 if stock_name not in existing_tickers:
-                    thread = threading.Thread(target=monitor_stock, args=(stock_name, direction, percent_change), name=stock_name)
+                    thread = threading.Thread(
+                        target=monitor_stock,
+                        args=(stock_name, direction, percent_change),
+                        name=stock_name,
+                    )
                     threads.append(thread)
                     thread.start()
-        time.sleep(1800) # wait for 30 minutes
+        time.sleep(1800)  # wait for 30 minutes
+
 
 if __name__ == "__main__":
     print("Monitoring stocks...")
